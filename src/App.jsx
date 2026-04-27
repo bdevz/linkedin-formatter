@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { scorePost } from './lib/scoring';
-import { STORAGE_KEY, DRAFTS_KEY, PROFILE_KEY, INSPIRATIONS_KEY, SAMPLE_POST, loadJSON, saveJSON } from './lib/storage';
+import { STORAGE_KEY, DRAFTS_KEY, PROFILE_KEY, INSPIRATIONS_KEY, BEST_PRACTICES_KEY, SAMPLE_POST, loadJSON, saveJSON } from './lib/storage';
 import Toolbar from './components/Toolbar';
 import HookLibrary from './components/HookLibrary';
 import MobileMock from './components/MobileMock';
@@ -9,6 +9,7 @@ import Scorecard from './components/Scorecard';
 import DraftDrawer from './components/DraftDrawer';
 import ProfilePopover from './components/ProfilePopover';
 import InspirationDrawer from './components/InspirationDrawer';
+import BestPractices from './components/BestPractices';
 
 export default function App() {
   const [text, setText] = useState(() => {
@@ -26,12 +27,14 @@ export default function App() {
   const [expandedMobile, setExpandedMobile] = useState(false);
   const [expandedDesktop, setExpandedDesktop] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [bpOverrides, setBpOverrides] = useState(() => loadJSON(BEST_PRACTICES_KEY, {}));
 
   // Auto-save
   useEffect(() => { saveJSON(STORAGE_KEY, text); }, [text]);
   useEffect(() => { saveJSON(PROFILE_KEY, profile); }, [profile]);
   useEffect(() => { saveJSON(DRAFTS_KEY, drafts); }, [drafts]);
   useEffect(() => { saveJSON(INSPIRATIONS_KEY, inspirations); }, [inspirations]);
+  useEffect(() => { saveJSON(BEST_PRACTICES_KEY, bpOverrides); }, [bpOverrides]);
 
   const score = useMemo(() => scorePost(text), [text]);
   const chars = text.length;
@@ -161,6 +164,7 @@ export default function App() {
         <section className="col score-col">
           <div className="score-head">Viral readiness</div>
           <Scorecard result={score} />
+          <BestPractices overrides={bpOverrides} onUpdate={setBpOverrides} />
         </section>
       </main>
 

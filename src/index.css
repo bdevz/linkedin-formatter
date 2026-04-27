@@ -468,3 +468,87 @@ button { font-family: inherit; }
   .col { overflow: visible; }
   .editor-wrap { min-height: 300px; }
 }
+
+/* ── Best Practices panel ── */
+.bp-panel { margin-top: 18px; }
+.bp-head {
+  font-weight: 650; font-size: 13px; letter-spacing: .3px;
+  text-transform: uppercase; color: var(--ink-2);
+  margin-bottom: 10px;
+}
+.bp-search {
+  width: 100%; padding: 7px 10px; border: 1px solid var(--line);
+  border-radius: 6px; font-size: 13px; font-family: var(--sans);
+  background: var(--panel); color: var(--ink); margin-bottom: 10px;
+  outline: none; transition: border-color .15s;
+}
+.bp-search:focus { border-color: var(--accent); }
+.bp-search::placeholder { color: var(--ink-3); }
+.bp-category { margin-bottom: 2px; }
+.bp-cat-head {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px; cursor: pointer; border-radius: 6px;
+  font-size: 13px; font-weight: 600; color: var(--ink);
+  transition: background .12s;
+  user-select: none;
+}
+.bp-cat-head:hover { background: var(--panel-2); }
+.bp-cat-emoji { font-size: 15px; flex-shrink: 0; }
+.bp-cat-label { flex: 1; }
+.bp-cat-count {
+  font-size: 11px; font-weight: 500; color: var(--ink-3);
+  background: var(--panel-2); padding: 2px 7px; border-radius: 99px;
+}
+.bp-cat-chevron {
+  font-size: 11px; color: var(--ink-3); transition: transform .15s;
+}
+.bp-cat-chevron.open { transform: rotate(90deg); }
+.bp-tips { padding: 2px 0 6px 34px; }
+.bp-tip {
+  position: relative; padding: 5px 0; font-size: 12.5px; line-height: 1.55;
+  color: var(--ink-2); border-bottom: 1px solid var(--line);
+}
+.bp-tip:last-child { border-bottom: none; }
+.bp-tip-text { padding-right: 50px; }
+.bp-tip-actions {
+  position: absolute; right: 0; top: 4px;
+  display: none; gap: 4px;
+}
+.bp-tip:hover .bp-tip-actions { display: flex; }
+.bp-tip-btn {
+  background: none; border: 1px solid var(--line); border-radius: 4px;
+  font-size: 11px; padding: 2px 6px; cursor: pointer; color: var(--ink-3);
+  transition: background .12s, color .12s;
+}
+.bp-tip-btn:hover { background: var(--panel-2); color: var(--ink); }
+.bp-tip-btn.delete:hover { color: var(--bad); border-color: var(--bad); }
+.bp-add-row {
+  padding: 4px 0 0;
+}
+.bp-add-btn {
+  background: none; border: none; font-size: 12px; color: var(--accent);
+  cursor: pointer; padding: 4px 0; font-family: var(--sans); font-weight: 500;
+}
+.bp-add-btn:hover { text-decoration: underline; }
+.bp-add-form {
+  display: flex; gap: 6px; padding: 6px 0;
+}
+.bp-add-input {
+  flex: 1; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px;
+  font-size: 12px; font-family: var(--sans); color: var(--ink);
+  background: var(--panel); outline: none;
+}
+.bp-add-input:focus { border-color: var(--accent); }
+.bp-edit-input {
+  width: 100%; padding: 6px 8px; border: 1px solid var(--accent); border-radius: 6px;
+  font-size: 12px; font-family: var(--sans); color: var(--ink);
+  background: var(--panel); outline: none; margin-bottom: 4px;
+}
+.bp-reset {
+  display: block; margin: 12px auto 0; background: none; border: none;
+  font-size: 11px; color: var(--ink-3); cursor: pointer; font-family: var(--sans);
+}
+.bp-reset:hover { color: var(--bad); text-decoration: underline; }
+.bp-empty {
+  text-align: center; padding: 16px 0; font-size: 12px; color: var(--ink-3);
+}

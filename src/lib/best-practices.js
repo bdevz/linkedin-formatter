@@ -1,0 +1,88 @@
+export const CATEGORIES = [
+  {
+    id: 'content-strategy',
+    emoji: '\u{1F3AF}',
+    label: 'Content Strategy',
+    tips: [
+      { id: 'cs1', text: 'Two content types matter: Story-Driven (personal, emotional, vulnerable) and Value-Driven (resources, guides, infographics). Combine both.' },
+      { id: 'cs2', text: 'Story topics that go viral: rags to riches, overcoming obstacles, personal transformation, appreciation of someone, unexpected changes.' },
+      { id: 'cs3', text: 'Value-driven formats: resource giveaways, slides/carousels, guides, images of sheets & lists, infographics.' },
+      { id: 'cs4', text: 'Third bonus type: Engagement-Driven \u2014 question prompts, polls, hiring threads, memes.' },
+      { id: 'cs5', text: 'Be vulnerable. People connect with real stories, not polished thought pieces.' },
+      { id: 'cs6', text: 'Becoming an influencer = combining storytelling + thought leadership. Hearts AND minds.' },
+    ],
+  },
+  {
+    id: 'post-formatting',
+    emoji: '\u{1F4DD}',
+    label: 'Post Formatting',
+    tips: [
+      { id: 'pf1', text: '57% of LinkedIn users are on mobile \u2014 optimize for mobile first.' },
+      { id: 'pf2', text: 'Short paragraphs (1\u20133 lines max), short sentences, fast pacing.' },
+      { id: 'pf3', text: 'Use "wave shape" \u2014 vary line lengths for visual rhythm on the feed.' },
+      { id: 'pf4', text: 'Keep posts under 3,000 characters (LinkedIn limit).' },
+      { id: 'pf5', text: 'First 140 characters are your fold \u2014 make them count. This is all people see before "...see more".' },
+    ],
+  },
+  {
+    id: 'hook-cta',
+    emoji: '\u{1FA9D}',
+    label: 'Hook & CTA',
+    tips: [
+      { id: 'hc1', text: 'The hook is the single most important element \u2014 it determines if anyone reads the rest.' },
+      { id: 'hc2', text: 'Hook patterns: personal stakes, contrarian take, numbers/receipts, curiosity gap, pattern interrupt.' },
+      { id: 'hc3', text: 'Always end with a CTA: "comment below", "follow for more", "share with your network".' },
+      { id: 'hc4', text: 'Resource giveaway formula: question hook \u2192 importance \u2192 offer resource \u2192 CTA to comment \u2192 screenshot of resource.' },
+      { id: 'hc5', text: 'Use emojis strategically as visual anchors (not excessively).' },
+    ],
+  },
+  {
+    id: 'media',
+    emoji: '\u{1F3AC}',
+    label: 'Media & Attachments',
+    tips: [
+      { id: 'ma1', text: 'Posts with images get more engagement than text-only.' },
+      { id: 'ma2', text: 'Slides/carousels (PDF uploads) drive high engagement \u2014 people swipe through them.' },
+      { id: 'ma3', text: 'Video repurposing: take viral videos and add your commentary.' },
+      { id: 'ma4', text: 'Image galleries of curated content (lists, tools, resources) perform well.' },
+      { id: 'ma5', text: 'Screenshots of resources drive "comment to get access" engagement loops.' },
+    ],
+  },
+  {
+    id: 'algorithm',
+    emoji: '\u{26A1}',
+    label: 'Algorithm & Timing',
+    tips: [
+      { id: 'at1', text: 'To go viral: get 1,000+ views in the first hour. The first 24 hours are critical.' },
+      { id: 'at2', text: 'If a post goes viral (5\u201310X avg reach), DO NOT post again for 48\u201372 hours \u2014 LinkedIn will stop promoting the viral post.' },
+      { id: 'at3', text: 'Comments are the #1 factor for virality. Full discussions in comments are even better.' },
+      { id: 'at4', text: 'Respond to every comment on your posts to boost reach.' },
+      { id: 'at5', text: 'Post consistently. If you skip posting, comment on 3 other posts to stay visible in feeds.' },
+      { id: 'at6', text: 'The algorithm promotes content to people similar to your connections ("Fly in the Mirror" effect).' },
+    ],
+  },
+  {
+    id: 'profile',
+    emoji: '\u{1F464}',
+    label: 'Profile Optimization',
+    tips: [
+      { id: 'po1', text: 'Treat your profile as a landing page, not a resume.' },
+      { id: 'po2', text: 'Profile photo: professional, high quality, good lighting. Aim for confidence, professionalism, trustworthiness.' },
+      { id: 'po3', text: 'Headline types: Achievement ("Forbes 30 Under 30"), Benefits ("I help X do Y"), Question ("Looking for...?"), Contact info.' },
+      { id: 'po4', text: 'Cover image 3-part formula: you speaking/authority + logo & press mentions + personal brand shot. Add a CTA.' },
+      { id: 'po5', text: 'About section: lead with CTA/contact info, then achievements in small chunks. 3 lines per paragraph max.' },
+      { id: 'po6', text: 'Featured links: customize thumbnails, link to landing pages, funnels, or valuable content. Don\'t skimp on these.' },
+      { id: 'po7', text: 'Use LinkedIn Post Inspector (linkedin.com/post-inspector) to verify link metadata after uploading.' },
+    ],
+  },
+  {
+    id: 'hashtags',
+    emoji: '#\uFE0F\u20E3',
+    label: 'Hashtags & Mentions',
+    tips: [
+      { id: 'hm1', text: 'Use 3 relevant hashtags per post \u2014 not too many, not too few.' },
+      { id: 'hm2', text: 'Tag relevant people/companies when sharing their resources for mutual engagement.' },
+      { id: 'hm3', text: 'Don\'t over-tag \u2014 keep it authentic. Spammy tagging hurts credibility.' },
+    ],
+  },
+];
