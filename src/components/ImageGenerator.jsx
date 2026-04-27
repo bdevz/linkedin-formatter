@@ -8,6 +8,7 @@ const MODELS = [
 
 export default function ImageGenerator({ open, text, onClose }) {
   const [model, setModel] = useState('gpt');
+  const [direction, setDirection] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [prompt, setPrompt] = useState('');
   const [loading, setLoading] = useState(false);
@@ -24,7 +25,7 @@ export default function ImageGenerator({ open, text, onClose }) {
       const res = await fetch('/api/generate-image', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, model }),
+        body: JSON.stringify({ text, model, direction }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Image generation failed');
@@ -84,10 +85,24 @@ export default function ImageGenerator({ open, text, onClose }) {
           ))}
         </div>
 
+        {!loading && (
+          <div className="img-gen-direction">
+            <label className="img-gen-direction-label">Image direction (optional)</label>
+            <input
+              className="img-gen-direction-input"
+              type="text"
+              value={direction}
+              onChange={(e) => setDirection(e.target.value)}
+              placeholder="e.g. coffee shop, laptop on desk, sunrise, whiteboard..."
+              disabled={loading}
+            />
+          </div>
+        )}
+
         {!imageUrl && !loading && !error && (
           <p className="img-gen-hint">
-            {selected.desc} — analyzes your post and generates a
-            scroll-stopping image tailored to your content.
+            {selected.desc} — generates a natural-looking photo
+            based on your post {direction ? 'and direction' : 'content'}.
           </p>
         )}
 

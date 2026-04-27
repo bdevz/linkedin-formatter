@@ -1,34 +1,45 @@
-const IMAGE_PROMPT_SYSTEM = `You create image prompts for LinkedIn post visuals. Given a post, generate a single image prompt that creates a scroll-stopping visual that looks like a real photo taken by the author — NOT an AI-generated image.
+const IMAGE_PROMPT_SYSTEM = `You create image prompts for LinkedIn post visuals. The user provides their post text and optional direction hints. Generate a prompt that produces a real-looking photo — NOT an AI-generated image.
 
 Prompt structure: background/scene → subject → key details → constraints.
 
-Style rules:
-- MUST look like a real iPhone or smartphone photo, not a studio shot
-- Include natural imperfections: slight grain, ambient lighting, real-world textures, minor blur
-- Use phrases like "iPhone photo", "candid shot", "natural lighting", "as if captured in the moment"
-- Describe real textures: fabric wear, desk clutter, coffee stains, fingerprints on screens
-- Avoid: ultra-HD, 8K, studio lighting, perfectly symmetrical compositions, stock photo feel
-- No text or words in the image
+CRITICAL — avoid AI artifacts:
+- NEVER include people's hands, fingers, or full human bodies unless the user specifically asks. Hands are the #1 giveaway of AI images.
+- Prefer: objects, environments, flat lays, screens, landscapes, over-the-shoulder shots where hands are out of frame
+- If people are needed, show them from behind, silhouetted, or at a distance where details blur naturally
 
-Scene guidance for LinkedIn:
-- Workspace shots: laptop open, notebook with handwriting, whiteboard sketches, messy desk
-- Behind-the-scenes: team huddle, walking through an office, working from a cafe
-- Metaphorical: a fork in the road, a hand reaching out, a single light in a dark room
-- Data/results: a phone screen showing a chart, sticky notes on a wall, a hand drawing a diagram
-- Personal moments: sunrise from a hotel window, airport terminal, a book with highlights
+Style — look like a real smartphone photo:
+- Shot on iPhone 15, natural lighting, slight depth of field
+- Include imperfections: minor grain, ambient shadows, slightly off-center framing
+- Real textures: worn notebook edges, scratched desk surface, wrinkled fabric
+- AVOID: ultra-HD, 8K, studio lighting, symmetrical compositions, stock photo feel, glossy renders
+- No text, words, or legible writing in the image
+
+LinkedIn scene ideas (pick one that fits the post):
+- Top-down flat lay: laptop, coffee, notebook, pen on a wooden desk
+- Environment: cafe window, co-working space, airport lounge, city skyline at golden hour
+- Objects: phone showing a graph, whiteboard with blurred sketches, stack of books, sticky notes
+- Nature metaphors: path through fog, single tree, sunrise over water, open road
+- Screens: laptop screen with blurred content, phone notification, monitor with charts
 
 Composition:
-- Specify framing: close-up, over-the-shoulder, wide shot, top-down flat lay
-- Specify perspective: eye-level, slightly low angle, looking down at desk
-- Specify lighting: golden hour, overcast daylight, warm indoor lamp, window light
+- Specify one framing: close-up, top-down, wide shot, over-the-shoulder
+- Specify one lighting: golden hour, overcast daylight, warm lamp, window light
+- Keep the scene simple — one focal point, not cluttered
 
-Keep under 150 words. Return ONLY the image prompt, nothing else.`;
+If the user provides direction hints, prioritize those over your own scene choice.
+
+Keep under 120 words. Return ONLY the image prompt, nothing else.`;
 
 const VALID_MODELS = ['gpt', 'flux-dev', 'flux-pro'];
 
-async function generateImagePrompt(text) {
+async function generateImagePrompt(text, direction) {
   const key = process.env.ANTHROPIC_API_KEY;
   if (!key) throw new Error('ANTHROPIC_API_KEY not configured');
+
+  let userMessage = `LinkedIn post:\n${text}`;
+  if (direction) {
+    userMessage += `\n\nUser's image direction: ${direction}`;
+  }
 
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -41,7 +52,7 @@ async function generateImagePrompt(text) {
       model: 'claude-sonnet-4-20250514',
       max_tokens: 512,
       system: IMAGE_PROMPT_SYSTEM,
-      messages: [{ role: 'user', content: `LinkedIn post:\n${text}` }],
+      messages: [{ role: 'user', content: userMessage }],
     }),
   });
 
@@ -72,7 +83,7 @@ async function generateWithGPT(prompt) {
       model: 'dall-e-3',
       prompt,
       size: '1792x1024',
-      quality: 'standard',
+      quality: 'hd',
       n: 1,
     }),
   });
@@ -155,7 +166,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { text, model } = req.body || {};
+  const { text, model, direction } = req.body || {};
 
   if (!text || typeof text !== 'string' || !text.trim()) {
     return res.status(400).json({ error: 'Text is required' });
@@ -166,8 +177,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Step 1: Generate an image prompt from the post text
-    const imagePrompt = await generateImagePrompt(text.trim());
+    // Step 1: Generate an image prompt from the post text + user direction
+    const imagePrompt = await generateImagePrompt(text.trim(), direction?.trim() || '');
 
     // Step 2: Generate the image with the selected model
     const imageUrl = model === 'gpt'

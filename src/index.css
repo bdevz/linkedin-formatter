@@ -674,6 +674,18 @@ button { font-family: inherit; }
 
 /* ── Image Generator ── */
 .img-gen-pop { width: 520px; }
+.img-gen-direction { display: flex; flex-direction: column; gap: 4px; }
+.img-gen-direction-label {
+  font-size: 11px; color: var(--ink-2); font-family: var(--mono);
+  text-transform: uppercase; letter-spacing: .05em;
+}
+.img-gen-direction-input {
+  padding: 8px 11px; border: 1px solid var(--line-2); border-radius: 6px;
+  font: inherit; font-size: 13px; background: var(--panel); color: var(--ink);
+  outline: none;
+}
+.img-gen-direction-input:focus { border-color: var(--accent); }
+.img-gen-direction-input::placeholder { color: var(--ink-3); }
 .img-gen-hint {
   font-size: 13px; color: var(--ink-3); line-height: 1.5; margin: 0;
 }
