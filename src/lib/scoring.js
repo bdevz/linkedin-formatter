@@ -52,11 +52,13 @@ function ruleHook(text) {
   if (/^(hey|hi|hello|good (morning|afternoon|evening))/i.test(hook)) { score -= 25; reasons.push('generic opener'); }
   score = Math.max(0, Math.min(100, score + 25));
 
+  const hookPreview = hook.length > 60 ? hook.slice(0, 57) + '...' : hook;
   return {
     id: 'hook',
     label: 'Hook strength',
     score,
     detail: reasons.join(' · '),
+    highlight: score < 80 ? hookPreview : '',
     status: statusFromScore(score),
     grade: gradeFromScore(score),
   };
@@ -119,13 +121,14 @@ function ruleLength(text) {
 function ruleLineLength(text) {
   const lines = nonEmptyLines(text);
   if (!lines.length) return { id: 'lineLength', label: 'Line length', score: 0, detail: 'No content', status: 'fail', grade: 'F' };
-  const long = lines.filter((l) => l.length > 100).length;
+  const longLines = lines.filter((l) => l.length > 100);
   const veryLong = lines.filter((l) => l.length > 140).length;
-  const ratio = long / lines.length;
+  const ratio = longLines.length / lines.length;
   let score = 100 - Math.round(ratio * 80) - veryLong * 8;
   score = Math.max(0, Math.min(100, score));
-  const detail = `${long}/${lines.length} lines over 100 chars${veryLong ? `, ${veryLong} over 140` : ''}`;
-  return { id: 'lineLength', label: 'Line length', score, detail, status: statusFromScore(score), grade: gradeFromScore(score) };
+  const detail = `${longLines.length}/${lines.length} lines over 100 chars${veryLong ? `, ${veryLong} over 140` : ''}`;
+  const highlight = longLines.length ? longLines.slice(0, 2).map((l) => l.length > 50 ? l.slice(0, 47) + '...' : l).join(' | ') : '';
+  return { id: 'lineLength', label: 'Line length', score, detail, highlight, status: statusFromScore(score), grade: gradeFromScore(score) };
 }
 
 function ruleWhitespace(text) {
@@ -159,11 +162,16 @@ function ruleShortSentences(text) {
   else if (avg > 12) score -= 5;
   score -= Math.min(30, long * 8);
   score = Math.max(0, Math.min(100, score));
+  const longSentences = sentences.filter((s) => tokens(s).length > 20);
+  const highlight = longSentences.length
+    ? longSentences.slice(0, 2).map((s) => s.length > 50 ? s.slice(0, 47) + '...' : s).join(' | ')
+    : '';
   return {
     id: 'shortSentences',
     label: 'Short sentences',
     score,
     detail: `avg ${avg.toFixed(1)} words${long ? ` · ${long} long` : ''}`,
+    highlight,
     status: statusFromScore(score),
     grade: gradeFromScore(score),
   };
@@ -171,15 +179,16 @@ function ruleShortSentences(text) {
 
 function ruleOrphans(text) {
   const lines = nonEmptyLines(text);
-  let orphans = 0;
+  const orphanLines = [];
   lines.forEach((l) => {
     const w = tokens(l);
-    if (w.length === 1 && l.length < 12) orphans += 1;
+    if (w.length === 1 && l.length < 12) orphanLines.push(l.trim());
   });
-  let score = 100 - orphans * 25;
+  let score = 100 - orphanLines.length * 25;
   score = Math.max(0, score);
-  const detail = orphans ? `${orphans} orphan line(s)` : 'no orphans';
-  return { id: 'orphans', label: 'No orphan words', score, detail, status: statusFromScore(score), grade: gradeFromScore(score) };
+  const detail = orphanLines.length ? `${orphanLines.length} orphan line(s)` : 'no orphans';
+  const highlight = orphanLines.length ? orphanLines.slice(0, 3).map((l) => `"${l}"`).join(', ') : '';
+  return { id: 'orphans', label: 'No orphan words', score, detail, highlight, status: statusFromScore(score), grade: gradeFromScore(score) };
 }
 
 function ruleChunking(text) {
@@ -197,15 +206,48 @@ function rulePowerEnding(text) {
   const lines = nonEmptyLines(text);
   const last = (lines[lines.length - 1] || '').trim();
   if (!last) return { id: 'ending', label: 'Power ending', score: 0, detail: '—', status: 'fail', grade: 'F' };
-  let score = 40;
+  let score = 20;
   const wc = tokens(last).length;
-  if (wc <= 10) score += 30;
-  else if (wc <= 16) score += 15;
-  if (/[?!]$/.test(last)) score += 15;
-  if (/\.$/.test(last)) score += 10;
-  if (/\b(remember|the truth|so|that's why|tell me|what would you|your turn)\b/i.test(last)) score += 15;
-  score = Math.min(100, score);
-  return { id: 'ending', label: 'Power ending', score, detail: `last line: ${wc} words`, status: statusFromScore(score), grade: gradeFromScore(score) };
+  const reasons = [];
+
+  // Length scoring — punchy endings win
+  if (wc <= 6) { score += 30; reasons.push('punchy'); }
+  else if (wc <= 10) { score += 22; reasons.push('short'); }
+  else if (wc <= 16) { score += 10; reasons.push('medium length'); }
+  else { score += 0; reasons.push(`${wc} words — too long for impact`); }
+
+  // Ending punctuation — questions and exclamations drive engagement
+  if (/[?]$/.test(last)) { score += 20; reasons.push('ends with question'); }
+  else if (/[!]$/.test(last)) { score += 15; reasons.push('ends with emphasis'); }
+  else if (/\.$/.test(last)) { score += 5; reasons.push('plain period'); }
+  else { reasons.push('missing punctuation'); }
+
+  // Power phrases — real engagement triggers (not "so")
+  if (/\b(remember this|the truth is|that'?s (why|the|it)|never forget|bottom line|here'?s what matters)\b/i.test(last)) {
+    score += 15; reasons.push('power phrase');
+  }
+
+  // CTA phrases in ending line
+  if (/\b(tell me|what (would|do|did) you|your turn|agree\??|thoughts\??|drop a|share your|comment below)\b/i.test(last)) {
+    score += 15; reasons.push('CTA in ending');
+  }
+
+  // Penalty for weak endings
+  if (/^(thanks|thank you|cheers|good luck|hope this helps)/i.test(last)) {
+    score -= 20; reasons.push('weak closer');
+  }
+  if (/\b(anyway|just saying|lol|haha)\b/i.test(last)) {
+    score -= 15; reasons.push('undermines ending');
+  }
+
+  score = Math.max(0, Math.min(100, score));
+  const lastPreview = last.length > 60 ? last.slice(0, 57) + '...' : last;
+  return {
+    id: 'ending', label: 'Power ending', score,
+    detail: reasons.join(' · '),
+    highlight: lastPreview,
+    status: statusFromScore(score), grade: gradeFromScore(score),
+  };
 }
 
 function ruleCTA(text) {
@@ -218,7 +260,9 @@ function ruleCTA(text) {
   if (hasQuestion) { score += 50; detail = 'ends with a question'; }
   if (hasInvite) { score += 25; detail += hasQuestion ? ' + invite' : ' (invite phrasing)'; }
   score = Math.min(100, score);
-  return { id: 'cta', label: 'Call to action', score, detail, status: statusFromScore(score), grade: gradeFromScore(score) };
+  const lastLine = (lines[lines.length - 1] || '').trim();
+  const highlight = score < 80 ? (lastLine.length > 60 ? lastLine.slice(0, 57) + '...' : lastLine) : '';
+  return { id: 'cta', label: 'Call to action', score, detail, highlight, status: statusFromScore(score), grade: gradeFromScore(score) };
 }
 
 function ruleEmoji(text) {

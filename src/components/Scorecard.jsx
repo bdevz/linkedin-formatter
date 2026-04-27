@@ -28,6 +28,9 @@ export default function Scorecard({ result }) {
               <div className="rule-bar-fill" style={{ width: r.score + '%' }} />
             </div>
             <div className="rule-detail">{r.detail}</div>
+            {r.highlight && r.status !== 'pass' && (
+              <div className="rule-highlight">⚠ {r.highlight}</div>
+            )}
           </li>
         ))}
       </ul>
