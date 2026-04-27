@@ -12,6 +12,7 @@ import InspirationDrawer from './components/InspirationDrawer';
 import BestPractices from './components/BestPractices';
 import OnboardingGuide from './components/OnboardingGuide';
 import AIReformat from './components/AIReformat';
+import ImageGenerator from './components/ImageGenerator';
 
 export default function App() {
   const [text, setText] = useState(() => {
@@ -32,6 +33,7 @@ export default function App() {
   const [bpOverrides, setBpOverrides] = useState(() => loadJSON(BEST_PRACTICES_KEY, {}));
   const [guideOpen, setGuideOpen] = useState(false);
   const [aiOpen, setAiOpen] = useState(false);
+  const [imageGenOpen, setImageGenOpen] = useState(false);
 
   // Auto-save
   useEffect(() => { saveJSON(STORAGE_KEY, text); }, [text]);
@@ -121,6 +123,9 @@ export default function App() {
             <HookLibrary onPick={handlePickHook} />
             <button className="btn primary ai" onClick={() => setAiOpen(true)} disabled={!text.trim()}>
               Reformat with AI
+            </button>
+            <button className="btn primary ai" onClick={() => setImageGenOpen(true)} disabled={!text.trim()}>
+              Generate Image
             </button>
           </div>
         </section>
@@ -213,6 +218,12 @@ export default function App() {
         text={text}
         onClose={() => setAiOpen(false)}
         onUse={(result) => setText(result)}
+      />
+
+      <ImageGenerator
+        open={imageGenOpen}
+        text={text}
+        onClose={() => setImageGenOpen(false)}
       />
     </div>
   );
