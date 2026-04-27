@@ -1,6 +1,13 @@
 import { useState } from 'react';
 
+const MODELS = [
+  { id: 'gpt', label: 'GPT (DALL-E 3)', desc: 'OpenAI — creative, stylized' },
+  { id: 'flux-dev', label: 'Flux Dev', desc: 'fal.ai — fast, balanced' },
+  { id: 'flux-pro', label: 'Flux Pro', desc: 'fal.ai — highest quality' },
+];
+
 export default function ImageGenerator({ open, text, onClose }) {
+  const [model, setModel] = useState('gpt');
   const [imageUrl, setImageUrl] = useState('');
   const [prompt, setPrompt] = useState('');
   const [loading, setLoading] = useState(false);
@@ -17,7 +24,7 @@ export default function ImageGenerator({ open, text, onClose }) {
       const res = await fetch('/api/generate-image', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({ text, model }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Image generation failed');
@@ -53,6 +60,8 @@ export default function ImageGenerator({ open, text, onClose }) {
     }
   };
 
+  const selected = MODELS.find((m) => m.id === model);
+
   return (
     <div className="pop-shell" onClick={(e) => e.target === e.currentTarget && handleClose()}>
       <div className="pop img-gen-pop">
@@ -61,10 +70,24 @@ export default function ImageGenerator({ open, text, onClose }) {
           <button className="x" onClick={handleClose}>&times;</button>
         </div>
 
+        <div className="ai-model-toggle">
+          {MODELS.map((m) => (
+            <button
+              key={m.id}
+              className={`ai-model-btn ${model === m.id ? 'active' : ''}`}
+              onClick={() => setModel(m.id)}
+              disabled={loading}
+              title={m.desc}
+            >
+              {m.label}
+            </button>
+          ))}
+        </div>
+
         {!imageUrl && !loading && !error && (
           <p className="img-gen-hint">
-            Analyzes your post and generates a scroll-stopping image
-            tailored to your content using AI.
+            {selected.desc} — analyzes your post and generates a
+            scroll-stopping image tailored to your content.
           </p>
         )}
 
@@ -72,7 +95,7 @@ export default function ImageGenerator({ open, text, onClose }) {
           <div className="img-gen-loading">
             <div className="ai-spinner" />
             <div>
-              <div>Creating your image...</div>
+              <div>Creating your image with {selected.label}...</div>
               <div className="img-gen-loading-sub">This may take 15-30 seconds</div>
             </div>
           </div>
