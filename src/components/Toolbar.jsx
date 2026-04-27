@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Toolbar({ chars, words, onCopy, onClear, onSampleLoad, onOpenDrafts, onOpenProfile, draftCount }) {
+export default function Toolbar({ chars, words, onCopy, onClear, onSampleLoad, onOpenDrafts, onOpenProfile, onOpenInspirations, draftCount, inspirationCount }) {
   return (
     <div className="toolbar">
       <div className="tb-left">
@@ -16,6 +16,9 @@ export default function Toolbar({ chars, words, onCopy, onClear, onSampleLoad, o
         <button className="btn ghost" onClick={onOpenProfile}>Profile</button>
         <button className="btn ghost" onClick={onOpenDrafts}>
           Drafts{draftCount ? ` (${draftCount})` : ''}
+        </button>
+        <button className="btn ghost" onClick={onOpenInspirations}>
+          Inspiration{inspirationCount ? ` (${inspirationCount})` : ''}
         </button>
         <button className="btn primary" onClick={onCopy}>Copy text</button>
       </div>

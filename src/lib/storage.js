@@ -1,6 +1,7 @@
 export const STORAGE_KEY = 'li-formatter:current';
 export const DRAFTS_KEY = 'li-formatter:drafts';
 export const PROFILE_KEY = 'li-formatter:profile';
+export const INSPIRATIONS_KEY = 'li-formatter:inspirations';
 
 export const SAMPLE_POST = `I've written 500 LinkedIn posts.
 

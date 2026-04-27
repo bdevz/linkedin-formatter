@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { scorePost } from './lib/scoring';
-import { STORAGE_KEY, DRAFTS_KEY, PROFILE_KEY, SAMPLE_POST, loadJSON, saveJSON } from './lib/storage';
+import { STORAGE_KEY, DRAFTS_KEY, PROFILE_KEY, INSPIRATIONS_KEY, SAMPLE_POST, loadJSON, saveJSON } from './lib/storage';
 import Toolbar from './components/Toolbar';
 import HookLibrary from './components/HookLibrary';
 import MobileMock from './components/MobileMock';
@@ -8,6 +8,7 @@ import DesktopMock from './components/DesktopMock';
 import Scorecard from './components/Scorecard';
 import DraftDrawer from './components/DraftDrawer';
 import ProfilePopover from './components/ProfilePopover';
+import InspirationDrawer from './components/InspirationDrawer';
 
 export default function App() {
   const [text, setText] = useState(() => {
@@ -18,8 +19,10 @@ export default function App() {
     loadJSON(PROFILE_KEY, { name: 'Your Name', headline: 'Your headline goes here', avatar: '' })
   );
   const [drafts, setDrafts] = useState(() => loadJSON(DRAFTS_KEY, []));
+  const [inspirations, setInspirations] = useState(() => loadJSON(INSPIRATIONS_KEY, []));
   const [draftsOpen, setDraftsOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [inspirationsOpen, setInspirationsOpen] = useState(false);
   const [expandedMobile, setExpandedMobile] = useState(false);
   const [expandedDesktop, setExpandedDesktop] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -28,6 +31,7 @@ export default function App() {
   useEffect(() => { saveJSON(STORAGE_KEY, text); }, [text]);
   useEffect(() => { saveJSON(PROFILE_KEY, profile); }, [profile]);
   useEffect(() => { saveJSON(DRAFTS_KEY, drafts); }, [drafts]);
+  useEffect(() => { saveJSON(INSPIRATIONS_KEY, inspirations); }, [inspirations]);
 
   const score = useMemo(() => scorePost(text), [text]);
   const chars = text.length;
@@ -49,6 +53,18 @@ export default function App() {
   const handleLoadDraft = (d) => { setText(d.text); setDraftsOpen(false); };
   const handleDeleteDraft = (id) => setDrafts(drafts.filter((d) => d.id !== id));
   const handlePickHook = (h) => setText((t) => h + '\n\n' + t);
+
+  const handleSaveInspiration = (entry) => {
+    const item = { id: Date.now().toString(36), ...entry, savedAt: Date.now() };
+    setInspirations([item, ...inspirations]);
+  };
+  const handleDeleteInspiration = (id) => setInspirations(inspirations.filter((i) => i.id !== id));
+  const handleInsertInspiration = (content) => { setText(content); setInspirationsOpen(false); };
+  const handleInsertInspirationHook = (content) => {
+    const firstLine = content.split('\n')[0];
+    setText((t) => firstLine + '\n\n' + t);
+    setInspirationsOpen(false);
+  };
 
   return (
     <div className="app">
@@ -79,7 +95,9 @@ export default function App() {
             onSampleLoad={handleSample}
             onOpenDrafts={() => setDraftsOpen(true)}
             onOpenProfile={() => setProfileOpen(true)}
+            onOpenInspirations={() => setInspirationsOpen(true)}
             draftCount={drafts.length}
+            inspirationCount={inspirations.length}
           />
           <div className="editor-wrap">
             <textarea
@@ -161,6 +179,16 @@ export default function App() {
         onClose={() => setProfileOpen(false)}
         profile={profile}
         onChange={setProfile}
+      />
+
+      <InspirationDrawer
+        open={inspirationsOpen}
+        onClose={() => setInspirationsOpen(false)}
+        inspirations={inspirations}
+        onSave={handleSaveInspiration}
+        onDelete={handleDeleteInspiration}
+        onInsert={handleInsertInspiration}
+        onInsertHook={handleInsertInspirationHook}
       />
     </div>
   );
