@@ -17,6 +17,13 @@
   --radius: 10px;
   --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
   --sans: 'Inter', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+  /* LinkedIn mock tokens */
+  --li-blue: #0a66c2;
+  --li-bg: #f4f2ee;
+  --li-text: rgba(0,0,0,0.9);
+  --li-text-2: rgba(0,0,0,0.6);
+  --li-text-3: rgba(0,0,0,0.4);
+  --li-border: rgba(0,0,0,0.08);
 }
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; margin: 0; }
@@ -175,9 +182,15 @@ button { font-family: inherit; }
 }
 .status-bar {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 8px 18px 4px; font-family: var(--mono); font-size: 11px; color: var(--ink);
+  padding: 14px 24px 6px; font-size: 15px; font-weight: 600;
+  color: black; position: relative;
 }
-.status-icons { letter-spacing: 1px; }
+.sb-time { font-variant-numeric: tabular-nums; font-family: -apple-system, system-ui, sans-serif; }
+.sb-notch {
+  position: absolute; left: 50%; top: 4px; transform: translateX(-50%);
+  width: 126px; height: 34px; background: black; border-radius: 20px;
+}
+.sb-icons { display: flex; align-items: center; gap: 5px; color: black; }
 .feed-scroll {
   flex: 1; overflow: hidden; background: var(--panel-2);
   display: flex; flex-direction: column;
@@ -195,8 +208,9 @@ button { font-family: inherit; }
   border-top: 1px solid var(--line); background: white;
 }
 .tab { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; }
-.tab-ico { width: 18px; height: 18px; background: var(--ink-3); border-radius: 3px; opacity: .35; }
-.tab.active .tab-ico { opacity: 1; background: var(--ink); }
+.tab-ico { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; color: rgba(0,0,0,0.4); }
+.tab.active .tab-ico { color: rgba(0,0,0,0.9); }
+.tab-ico svg { width: 100%; height: 100%; }
 .tab-lab { font-size: 9.5px; color: var(--ink-3); }
 .tab.active .tab-lab { color: var(--ink); font-weight: 600; }
 
@@ -204,22 +218,46 @@ button { font-family: inherit; }
 .device.desktop {
   width: 600px; border: 1px solid var(--line);
 }
-.browser-bar {
-  display: flex; align-items: center; gap: 12px; padding: 10px 14px;
-  border-bottom: 1px solid var(--line); background: var(--panel-2);
+.li-nav-desktop {
+  display: flex; align-items: center; gap: 8px;
+  padding: 0 12px; height: 52px; background: white;
+  border-bottom: 1px solid var(--li-border);
 }
-.dots-row { display: flex; gap: 6px; }
-.dots-row .d { width: 10px; height: 10px; border-radius: 50%; }
-.d.r { background: oklch(70% 0.18 25); }
-.d.y { background: oklch(80% 0.15 80); }
-.d.g { background: oklch(70% 0.15 145); }
-.url {
-  font-family: var(--mono); font-size: 11px; color: var(--ink-3);
-  background: white; border: 1px solid var(--line); border-radius: 4px;
-  padding: 3px 10px; flex: 1; max-width: 280px;
+.li-nav-desktop .li-logo { flex-shrink: 0; }
+.li-search-desktop {
+  display: flex; align-items: center; gap: 8px;
+  background: #edf3f8; border-radius: 4px;
+  padding: 6px 10px; font-size: 12px; color: var(--li-text-2); width: 130px;
 }
-.desktop-feed { padding: 18px; background: var(--panel-2); }
-.desktop-card { padding: 16px 16px 0; border: 1px solid var(--line); border-radius: 10px; background: white; }
+.li-nav-tabs { display: flex; margin-left: auto; gap: 0; }
+.li-nav-tab {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 0 12px; color: var(--li-text-2); font-size: 10px;
+  height: 52px; justify-content: center; cursor: default;
+  border-bottom: 2px solid transparent;
+}
+.li-nav-tab.active { color: var(--li-text); border-bottom-color: var(--li-text); }
+.li-nav-tab svg { width: 20px; height: 20px; }
+.desktop-feed { padding: 8px 16px; background: var(--li-bg); }
+.desktop-card { padding: 16px 16px 0; border: 1px solid var(--li-border); border-radius: 8px; background: white; }
+
+/* LinkedIn mobile header */
+.li-header-mobile {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px; background: white;
+  border-bottom: 1px solid var(--li-border);
+}
+.li-header-mobile .li-logo { flex-shrink: 0; }
+.li-search {
+  flex: 1; display: flex; align-items: center; gap: 8px;
+  background: #edf3f8; border-radius: 4px;
+  padding: 7px 10px; font-size: 13px; color: var(--li-text-2);
+}
+.li-msg-icon { flex-shrink: 0; }
+.li-following-tag {
+  color: var(--li-text-2); font-size: 12px; font-weight: 600;
+  white-space: nowrap; padding: 4px 0;
+}
 
 /* Card head */
 .card-head { display: flex; gap: 10px; align-items: flex-start; padding-bottom: 10px; }
@@ -278,14 +316,25 @@ button { font-family: inherit; }
   border-top: 1px solid var(--line);
   font-size: 11.5px; color: var(--ink-3); font-family: var(--mono);
 }
-.reaction-stack { font-size: 12px; }
+.reaction-stack { display: flex; align-items: center; }
+.reaction-circle {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 1.5px solid white; display: inline-flex;
+  align-items: center; justify-content: center;
+  font-size: 9px; line-height: 1;
+}
+.reaction-circle + .reaction-circle { margin-left: -4px; }
+.reaction-circle.like { background: #378fe9; }
+.reaction-circle.heart { background: #e04e53; }
+.reaction-circle.celebrate { background: #f5bb5c; }
 .spacer { flex: 1; }
 .actions-row {
   display: flex; justify-content: space-around; padding: 4px 0 10px;
   border-top: 1px solid var(--line);
 }
 .action { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 4px 6px; }
-.a-ico { width: 18px; height: 18px; border: 1.5px solid var(--ink-3); border-radius: 3px; opacity: .6; }
+.a-ico { display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; color: var(--li-text-2); }
+.a-ico svg { width: 100%; height: 100%; }
 .a-lab { font-size: 11px; color: var(--ink-3); font-weight: 500; }
 
 /* Scorecard */
