@@ -45,6 +45,7 @@ button { font-family: inherit; }
 }
 .brand-name { font-weight: 650; font-size: 15px; letter-spacing: -.2px; }
 .brand-sub { font-family: var(--mono); font-size: 11px; color: var(--ink-3); margin-top: 2px; }
+.head-right { display: flex; align-items: center; gap: 10px; }
 .pill {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 6px 12px; border-radius: 999px;
@@ -552,3 +553,33 @@ button { font-family: inherit; }
 .bp-empty {
   text-align: center; padding: 16px 0; font-size: 12px; color: var(--ink-3);
 }
+
+/* ── Onboarding Guide ── */
+.guide-drawer { width: 480px; overflow-y: auto; }
+.guide-content { flex: 1; overflow-y: auto; padding-bottom: 20px; }
+.guide-section { margin-bottom: 20px; }
+.guide-h {
+  font-size: 14px; font-weight: 650; color: var(--ink);
+  margin: 0 0 6px; line-height: 1.4;
+}
+.guide-p {
+  font-size: 13px; line-height: 1.65; color: var(--ink-2);
+  margin: 0 0 6px;
+}
+.guide-p strong { color: var(--ink); font-weight: 600; }
+.guide-tip-box {
+  background: var(--accent-soft); border-radius: 8px;
+  padding: 14px 16px;
+}
+.guide-list {
+  margin: 0; padding: 0 0 0 18px; font-size: 13px;
+  line-height: 1.8; color: var(--ink-2);
+}
+.guide-list li { margin-bottom: 2px; }
+.guide-btn {
+  background: none; border: 1px solid var(--line);
+  border-radius: 6px; padding: 5px 12px; font-size: 13px;
+  cursor: pointer; color: var(--ink-2); font-family: var(--sans);
+  transition: background .12s, color .12s;
+}
+.guide-btn:hover { background: var(--panel-2); color: var(--ink); }

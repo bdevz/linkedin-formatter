@@ -10,6 +10,7 @@ import DraftDrawer from './components/DraftDrawer';
 import ProfilePopover from './components/ProfilePopover';
 import InspirationDrawer from './components/InspirationDrawer';
 import BestPractices from './components/BestPractices';
+import OnboardingGuide from './components/OnboardingGuide';
 
 export default function App() {
   const [text, setText] = useState(() => {
@@ -28,6 +29,7 @@ export default function App() {
   const [expandedDesktop, setExpandedDesktop] = useState(false);
   const [copied, setCopied] = useState(false);
   const [bpOverrides, setBpOverrides] = useState(() => loadJSON(BEST_PRACTICES_KEY, {}));
+  const [guideOpen, setGuideOpen] = useState(false);
 
   // Auto-save
   useEffect(() => { saveJSON(STORAGE_KEY, text); }, [text]);
@@ -80,6 +82,7 @@ export default function App() {
           </div>
         </div>
         <div className="head-right">
+          <button className="guide-btn" onClick={() => setGuideOpen(true)}>Guide</button>
           <div className="pill">
             <span className={`pill-dot grade-${score.grade}`} />
             Score <strong>{score.overall || 0}</strong> · {score.grade || '—'}
@@ -193,6 +196,11 @@ export default function App() {
         onDelete={handleDeleteInspiration}
         onInsert={handleInsertInspiration}
         onInsertHook={handleInsertInspirationHook}
+      />
+
+      <OnboardingGuide
+        open={guideOpen}
+        onClose={() => setGuideOpen(false)}
       />
     </div>
   );
