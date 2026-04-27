@@ -11,6 +11,7 @@ import ProfilePopover from './components/ProfilePopover';
 import InspirationDrawer from './components/InspirationDrawer';
 import BestPractices from './components/BestPractices';
 import OnboardingGuide from './components/OnboardingGuide';
+import AIReformat from './components/AIReformat';
 
 export default function App() {
   const [text, setText] = useState(() => {
@@ -30,6 +31,7 @@ export default function App() {
   const [copied, setCopied] = useState(false);
   const [bpOverrides, setBpOverrides] = useState(() => loadJSON(BEST_PRACTICES_KEY, {}));
   const [guideOpen, setGuideOpen] = useState(false);
+  const [aiOpen, setAiOpen] = useState(false);
 
   // Auto-save
   useEffect(() => { saveJSON(STORAGE_KEY, text); }, [text]);
@@ -117,6 +119,9 @@ export default function App() {
           </div>
           <div className="editor-foot">
             <HookLibrary onPick={handlePickHook} />
+            <button className="btn primary ai" onClick={() => setAiOpen(true)} disabled={!text.trim()}>
+              Reformat with AI
+            </button>
           </div>
         </section>
 
@@ -201,6 +206,13 @@ export default function App() {
       <OnboardingGuide
         open={guideOpen}
         onClose={() => setGuideOpen(false)}
+      />
+
+      <AIReformat
+        open={aiOpen}
+        text={text}
+        onClose={() => setAiOpen(false)}
+        onUse={(result) => setText(result)}
       />
     </div>
   );
