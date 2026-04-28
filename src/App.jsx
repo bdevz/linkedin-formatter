@@ -176,7 +176,7 @@ export default function App() {
         {/* RIGHT: scorecard */}
         <section className="col score-col">
           <div className="score-head">Viral readiness</div>
-          <Scorecard result={score} />
+          <Scorecard result={score} text={text} />
           <BestPractices overrides={bpOverrides} onUpdate={setBpOverrides} />
         </section>
       </main>
