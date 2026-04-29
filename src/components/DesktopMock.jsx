@@ -1,5 +1,5 @@
 import React from 'react';
-import { DESKTOP_FOLD_CHARS } from '../lib/scoring';
+import { DESKTOP_FOLD_CHARS, DESKTOP_FOLD_CHARS_IMAGE } from '../lib/scoring';
 import PostBody from './PostBody';
 
 /* ── Inline SVG icons ── */
@@ -78,7 +78,8 @@ const navTabs = [
   { label: 'Notifications', icon: NotifNavIcon },
 ];
 
-export default function DesktopMock({ text, profile, expanded, onToggle }) {
+export default function DesktopMock({ text, profile, expanded, onToggle, image }) {
+  const foldChars = image ? DESKTOP_FOLD_CHARS_IMAGE : DESKTOP_FOLD_CHARS;
   return (
     <div className="device desktop">
       {/* LinkedIn nav bar */}
@@ -124,7 +125,12 @@ export default function DesktopMock({ text, profile, expanded, onToggle }) {
             </div>
             <button className="follow">+ Follow</button>
           </div>
-          <PostBody text={text} foldChars={DESKTOP_FOLD_CHARS} expanded={expanded} onToggle={onToggle} />
+          <PostBody text={text} foldChars={foldChars} expanded={expanded} onToggle={onToggle} />
+          {image && (
+            <div className="post-image">
+              <img src={image} alt="Post attachment" />
+            </div>
+          )}
           <div className="reactions">
             <span className="reaction-stack">
               <span className="reaction-circle like" />

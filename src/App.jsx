@@ -34,6 +34,18 @@ export default function App() {
   const [guideOpen, setGuideOpen] = useState(false);
   const [aiOpen, setAiOpen] = useState(false);
   const [imageGenOpen, setImageGenOpen] = useState(false);
+  const [postImage, setPostImage] = useState('');
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (postImage) URL.revokeObjectURL(postImage);
+    setPostImage(URL.createObjectURL(file));
+  };
+  const handleRemoveImage = () => {
+    if (postImage) URL.revokeObjectURL(postImage);
+    setPostImage('');
+  };
 
   // Auto-save
   useEffect(() => { saveJSON(STORAGE_KEY, text); }, [text]);
@@ -119,8 +131,22 @@ export default function App() {
             />
             {copied && <div className="copied-toast">Copied ✓</div>}
           </div>
+          {postImage && (
+            <div className="image-attach-preview">
+              <img src={postImage} alt="Attached" />
+              <button className="image-attach-remove" onClick={handleRemoveImage}>&times;</button>
+            </div>
+          )}
           <div className="editor-foot">
             <HookLibrary onPick={handlePickHook} />
+            <label className="btn image-attach-btn" title="Attach image to preview">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <path d="M21 15l-5-5L5 21"/>
+              </svg>
+              <input type="file" accept="image/*" onChange={handleImageUpload} hidden />
+            </label>
             <button className="btn primary ai" onClick={() => setAiOpen(true)} disabled={!text.trim()}>
               Reformat with AI
             </button>
@@ -147,6 +173,7 @@ export default function App() {
                 profile={profile}
                 expanded={expandedMobile}
                 onToggle={() => setExpandedMobile(!expandedMobile)}
+                image={postImage}
               />
               <button
                 className="tiny-toggle"
@@ -162,6 +189,7 @@ export default function App() {
                 profile={profile}
                 expanded={expandedDesktop}
                 onToggle={() => setExpandedDesktop(!expandedDesktop)}
+                image={postImage}
               />
               <button
                 className="tiny-toggle"

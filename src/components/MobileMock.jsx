@@ -1,5 +1,5 @@
 import React from 'react';
-import { MOBILE_FOLD_CHARS } from '../lib/scoring';
+import { MOBILE_FOLD_CHARS, MOBILE_FOLD_CHARS_IMAGE } from '../lib/scoring';
 import PostBody from './PostBody';
 
 /* ── Inline SVG icons ── */
@@ -104,7 +104,8 @@ const tabItems = [
   { label: 'Jobs', icon: JobsIcon },
 ];
 
-export default function MobileMock({ text, profile, expanded, onToggle }) {
+export default function MobileMock({ text, profile, expanded, onToggle, image }) {
+  const foldChars = image ? MOBILE_FOLD_CHARS_IMAGE : MOBILE_FOLD_CHARS;
   return (
     <div className="device mobile">
       <div className="device-frame">
@@ -152,7 +153,12 @@ export default function MobileMock({ text, profile, expanded, onToggle }) {
               </div>
               <span className="li-following-tag">Following</span>
             </div>
-            <PostBody text={text} foldChars={MOBILE_FOLD_CHARS} expanded={expanded} onToggle={onToggle} />
+            <PostBody text={text} foldChars={foldChars} expanded={expanded} onToggle={onToggle} />
+            {image && (
+              <div className="post-image">
+                <img src={image} alt="Post attachment" />
+              </div>
+            )}
             <div className="reactions">
               <span className="reaction-stack">
                 <span className="reaction-circle like" />

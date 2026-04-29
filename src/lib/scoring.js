@@ -3,6 +3,8 @@
 
 export const MOBILE_FOLD_CHARS = 140; // ~3 short lines on mobile before "...more"
 export const DESKTOP_FOLD_CHARS = 210; // ~3 lines on desktop before "...more"
+export const MOBILE_FOLD_CHARS_IMAGE = 95; // ~2 lines on mobile when image attached
+export const DESKTOP_FOLD_CHARS_IMAGE = 150; // ~2 lines on desktop when image attached
 
 function gradeFromScore(s) {
   if (s >= 90) return 'A';
