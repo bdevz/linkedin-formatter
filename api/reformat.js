@@ -1,4 +1,21 @@
-const OPTIMIZE_PROMPT = `You are an expert LinkedIn growth writer. Rewrite the post below for maximum readability and "fold-stop" power on mobile. Keep the author's core message and facts. Apply these rules:
+const HUMANIZER_RULES = `
+ANTI-AI WRITING RULES (non-negotiable):
+- NEVER use em dashes (--). Use periods or commas instead.
+- NEVER use these words: crucial, delve, landscape, pivotal, underscore, showcase, foster, leverage, navigate, testament, tapestry, interplay, intricate, garnered, encompasses, vital, enduring, vibrant, profound, groundbreaking, nestled, renowned
+- NEVER use "Not only X, but Y" or "It's not just X, it's Y" structures
+- NEVER use "serves as" or "stands as" when you mean "is"
+- NEVER use "At its core", "The real question is", "What really matters", "The deeper issue"
+- NEVER use rule-of-three lists ("innovation, inspiration, and insights")
+- NEVER use "Let's dive in", "Here's the thing", "Let me break this down"
+- NEVER use filler: "In order to" (say "to"), "Due to the fact that" (say "because")
+- Use "is" and "has" not "serves as" and "boasts"
+- Use simple words. "Big" not "significant". "Hard" not "challenging".
+- Contractions always. "don't" not "do not". "it's" not "it is".
+- Use straight quotes, never curly quotes`;
+
+const OPTIMIZE_PROMPT = `Rewrite this LinkedIn post for maximum readability and mobile "fold-stop" power. Keep the author's core message and facts.
+
+Structure rules:
 - Hook in <8 words, ideally with a number, first-person, or curiosity
 - Second line rehooks (challenges or extends the hook)
 - One idea per line; break every 1-2 sentences
@@ -7,12 +24,15 @@ const OPTIMIZE_PROMPT = `You are an expert LinkedIn growth writer. Rewrite the p
 - No orphan single-word lines
 - End with a sharp takeaway and a question CTA
 - Total length 700-1500 chars
+${HUMANIZER_RULES}
 
-Return ONLY the rewritten post text — no preamble, no quotes, no commentary.`;
+The result should sound like a real person wrote it, not like AI polished it. Messy is better than perfect. Have opinions. Vary sentence length.
 
-const POLISH_PROMPT = `You are a careful editor. The writer has a specific voice and emotional tone — your job is to PRESERVE it completely while improving only the structure for LinkedIn mobile readability.
+Return ONLY the rewritten post text. No preamble, no quotes, no commentary.`;
 
-STRICT RULES — what you MUST keep untouched:
+const POLISH_PROMPT = `You are a careful editor. The writer has a specific voice and emotional tone. PRESERVE it completely while improving only the structure for LinkedIn mobile readability.
+
+What you MUST keep untouched:
 - The writer's exact word choices and vocabulary
 - Emotional language, vulnerability, personal anecdotes
 - Their natural speaking rhythm and personality
@@ -33,9 +53,10 @@ What you MUST NOT do:
 - Turn a personal story into a "lesson post"
 - Add a question CTA if the writer didn't have one
 - Change the emotional register (if it's sad, keep it sad; if it's angry, keep it angry)
-- Make it sound more "professional" or "polished" — rawness is often the point
+- Make it sound more "professional" or "polished". Rawness is often the point
+${HUMANIZER_RULES}
 
-Return ONLY the edited post text — no preamble, no quotes, no commentary.`;
+Return ONLY the edited post text. No preamble, no quotes, no commentary.`;
 
 async function callClaude(text, systemPrompt) {
   const key = process.env.ANTHROPIC_API_KEY;
