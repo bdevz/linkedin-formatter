@@ -783,3 +783,54 @@ button { font-family: inherit; }
   border-radius: 6px; font-size: 12px; line-height: 1.5;
   color: var(--ink-2);
 }
+
+/* -- Comment Crafter -- */
+.comment-crafter-btn {
+  background: none; border: 1px solid var(--line);
+  border-radius: 6px; padding: 5px 12px; font-size: 13px;
+  cursor: pointer; color: var(--ink-2); font-family: var(--sans);
+  transition: background .12s, color .12s; font-weight: 500;
+}
+.comment-crafter-btn:hover { background: var(--panel-2); color: var(--ink); }
+.comment-crafter-pop { width: 580px; max-height: 85vh; overflow-y: auto; }
+.comment-crafter-input {
+  width: 100%; padding: 14px; border: 1px solid var(--line);
+  border-radius: 8px; font-family: var(--sans); font-size: 14px;
+  line-height: 1.55; color: var(--ink); resize: vertical;
+  background: var(--panel); outline: none; min-height: 120px;
+}
+.comment-crafter-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.comment-crafter-input::placeholder { color: var(--ink-3); }
+.comment-crafter-direction { display: flex; flex-direction: column; gap: 4px; }
+.comment-crafter-direction-label {
+  font-size: 11px; color: var(--ink-2); font-family: var(--mono);
+  text-transform: uppercase; letter-spacing: .05em;
+}
+.comment-crafter-direction-input {
+  padding: 8px 11px; border: 1px solid var(--line-2); border-radius: 6px;
+  font: inherit; font-size: 13px; background: var(--panel); color: var(--ink);
+  outline: none;
+}
+.comment-crafter-direction-input:focus { border-color: var(--accent); }
+.comment-crafter-direction-input::placeholder { color: var(--ink-3); }
+.comment-crafter-results { display: flex; flex-direction: column; gap: 12px; }
+.comment-crafter-card {
+  border: 1px solid var(--line); border-radius: 8px;
+  padding: 12px; background: var(--panel);
+}
+.comment-crafter-card-head {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 8px;
+}
+.comment-crafter-angle {
+  font-family: var(--mono); font-size: 11px; color: var(--accent);
+  text-transform: uppercase; letter-spacing: .05em; font-weight: 600;
+}
+.comment-crafter-text {
+  width: 100%; padding: 10px; border: 1px solid var(--line);
+  border-radius: 6px; font-family: var(--sans); font-size: 13.5px;
+  line-height: 1.5; color: var(--ink); resize: vertical;
+  background: var(--panel-2); outline: none;
+}
+.comment-crafter-text:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.btn.copied { background: var(--good); color: white; border-color: var(--good); }

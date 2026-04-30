@@ -13,6 +13,7 @@ import BestPractices from './components/BestPractices';
 import OnboardingGuide from './components/OnboardingGuide';
 import AIReformat from './components/AIReformat';
 import ImageGenerator from './components/ImageGenerator';
+import CommentCrafter from './components/CommentCrafter';
 
 export default function App() {
   const [text, setText] = useState(() => {
@@ -34,6 +35,7 @@ export default function App() {
   const [guideOpen, setGuideOpen] = useState(false);
   const [aiOpen, setAiOpen] = useState(false);
   const [imageGenOpen, setImageGenOpen] = useState(false);
+  const [commentCrafterOpen, setCommentCrafterOpen] = useState(false);
   const [postImage, setPostImage] = useState('');
 
   const handleImageUpload = (e) => {
@@ -98,6 +100,7 @@ export default function App() {
           </div>
         </div>
         <div className="head-right">
+          <button className="comment-crafter-btn" onClick={() => setCommentCrafterOpen(true)}>Comment Crafter</button>
           <button className="guide-btn" onClick={() => setGuideOpen(true)}>Guide</button>
           <div className="pill">
             <span className={`pill-dot grade-${score.grade}`} />
@@ -252,6 +255,12 @@ export default function App() {
         open={imageGenOpen}
         text={text}
         onClose={() => setImageGenOpen(false)}
+      />
+
+      <CommentCrafter
+        open={commentCrafterOpen}
+        profile={profile}
+        onClose={() => setCommentCrafterOpen(false)}
       />
     </div>
   );
