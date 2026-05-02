@@ -1,3 +1,5 @@
+import { humanizePost } from './_humanizer.js';
+
 const HUMANIZER_RULES = `
 ANTI-AI WRITING RULES (non-negotiable):
 - NEVER use em dashes (--). Use periods or commas instead.
@@ -57,32 +59,6 @@ What you MUST NOT do:
 ${HUMANIZER_RULES}
 
 Return ONLY the edited post text. No preamble, no quotes, no commentary.`;
-
-// Deterministic text cleanup - catches what the AI "forgets" to fix
-function deAI(text) {
-  return text
-    .replace(/\s*[—–]\s*/g, '. ')
-    .replace(/\s*--\s*/g, '. ')
-    .replace(/[\u201C\u201D]/g, '"')
-    .replace(/[\u2018\u2019]/g, "'")
-    .replace(/\bIn order to\b/gi, 'To')
-    .replace(/\bDue to the fact that\b/gi, 'Because')
-    .replace(/\bIt is important to note that\s*/gi, '')
-    .replace(/\bIt's worth noting that\s*/gi, '')
-    .replace(/\bAt its core,?\s*/gi, '')
-    .replace(/\bThe real question is,?\s*/gi, '')
-    .replace(/\bWhat really matters is,?\s*/gi, '')
-    .replace(/\bAt the end of the day,?\s*/gi, '')
-    .replace(/\bHere's the thing[.:,]?\s*/gi, '')
-    .replace(/\bserves as\b/gi, 'is')
-    .replace(/\bstands as\b/gi, 'is')
-    .replace(/\bdo not\b/gi, "don't")
-    .replace(/\bcannot\b/gi, "can't")
-    .replace(/\bwill not\b/gi, "won't")
-    .replace(/\.\.\s/g, '. ')
-    .replace(/\s{2,}/g, ' ')
-    .trim();
-}
 
 async function callClaude(text, systemPrompt) {
   const key = process.env.ANTHROPIC_API_KEY;
@@ -163,7 +139,10 @@ export default async function handler(req, res) {
       ? await callClaude(text.trim(), systemPrompt)
       : await callOpenAI(text.trim(), systemPrompt);
 
-    const result = deAI(raw.trim());
+    const key = process.env.ANTHROPIC_API_KEY;
+    const result = key
+      ? await humanizePost(raw.trim(), key)
+      : raw.trim();
     return res.status(200).json({ result });
   } catch (err) {
     console.error('Reformat error:', err.message);

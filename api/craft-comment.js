@@ -1,3 +1,5 @@
+import { humanize } from './_humanizer.js';
+
 const COMMENT_SYSTEM = `You write LinkedIn comments for someone. The comments must sound like a real person typed them on their phone, not like AI generated them.
 
 COMMENTER:
@@ -57,74 +59,6 @@ RESPONSE FORMAT - return valid JSON only:
 
 Generate exactly 3 comments with different angles. Return ONLY the JSON, no markdown fences.`;
 
-// Deterministic text cleanup - catches what the AI "forgets" to fix
-function deAI(text) {
-  return text
-    // Em dashes and en dashes to periods or commas
-    .replace(/\s*[—–]\s*/g, '. ')
-    .replace(/\s*--\s*/g, '. ')
-    // Curly quotes to straight
-    .replace(/[\u201C\u201D]/g, '"')
-    .replace(/[\u2018\u2019]/g, "'")
-    // Common AI filler phrases
-    .replace(/\bIn order to\b/gi, 'To')
-    .replace(/\bDue to the fact that\b/gi, 'Because')
-    .replace(/\bIt is important to note that\s*/gi, '')
-    .replace(/\bIt's worth noting that\s*/gi, '')
-    .replace(/\bAt its core,?\s*/gi, '')
-    .replace(/\bThe real question is,?\s*/gi, '')
-    .replace(/\bWhat really matters is,?\s*/gi, '')
-    .replace(/\bAt the end of the day,?\s*/gi, '')
-    .replace(/\bHere's the thing[.:,]?\s*/gi, '')
-    .replace(/\bLet me break this down[.:,]?\s*/gi, '')
-    // "serves as" / "stands as" -> "is"
-    .replace(/\bserves as\b/gi, 'is')
-    .replace(/\bstands as\b/gi, 'is')
-    // "do not" -> "don't" etc
-    .replace(/\bdo not\b/gi, "don't")
-    .replace(/\bcannot\b/gi, "can't")
-    .replace(/\bwill not\b/gi, "won't")
-    .replace(/\bit is\b/gi, "it's")
-    .replace(/\bthat is\b/gi, "that's")
-    // Double spaces from replacements
-    .replace(/\.\.\s/g, '. ')
-    .replace(/\s{2,}/g, ' ')
-    .trim();
-}
-
-const AUDIT_SYSTEM = `You are an AI-writing detector. Your ONLY job is to rewrite the text to remove remaining AI tells.
-
-Check for and fix:
-- Any em dashes or en dashes (replace with periods or commas)
-- "Not only X, but Y" or "It's not just X, it's Y" patterns (state the point directly)
-- "What strikes me" or similar observation-announcement patterns
-- Overly parallel sentence structures
-- Any words from this list: crucial, delve, landscape, pivotal, underscore, showcase, foster, leverage, navigate, testament, tapestry, interplay, intricate, vital, enduring, vibrant, profound, groundbreaking
-- Rule-of-three lists
-- Perfect grammar where casual would be more natural
-
-Keep the meaning identical. Just make it sound like a real person typed it on their phone.
-Return ONLY the fixed text, nothing else.`;
-
-async function auditPass(text, key) {
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': key,
-      'anthropic-version': '2023-06-01',
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 512,
-      system: AUDIT_SYSTEM,
-      messages: [{ role: 'user', content: text }],
-    }),
-  });
-  if (!res.ok) return text; // fallback to original if audit fails
-  const data = await res.json();
-  return data.content[0].text.trim();
-}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -175,12 +109,11 @@ export default async function handler(req, res) {
     const parsed = JSON.parse(raw);
     const comments = parsed.comments || [];
 
-    // Two-pass humanization: programmatic cleanup + AI audit
+    // Three-tier humanization: deterministic cleanup + pattern detection + surgical fix
     const humanized = await Promise.all(
       comments.map(async (c) => {
-        const cleaned = deAI(c.text);
-        const audited = await auditPass(cleaned, key);
-        return { angle: c.angle, text: deAI(audited) }; // deAI again after audit
+        const cleaned = await humanize(c.text, key);
+        return { angle: c.angle, text: cleaned };
       })
     );
 
