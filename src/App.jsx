@@ -14,6 +14,7 @@ import OnboardingGuide from './components/OnboardingGuide';
 import AIReformat from './components/AIReformat';
 import ImageGenerator from './components/ImageGenerator';
 import CommentCrafter from './components/CommentCrafter';
+import MemeMode from './components/MemeMode';
 
 export default function App() {
   const [text, setText] = useState(() => {
@@ -36,6 +37,7 @@ export default function App() {
   const [aiOpen, setAiOpen] = useState(false);
   const [imageGenOpen, setImageGenOpen] = useState(false);
   const [commentCrafterOpen, setCommentCrafterOpen] = useState(false);
+  const [memeOpen, setMemeOpen] = useState(false);
   const [postImage, setPostImage] = useState('');
 
   const handleImageUpload = (e) => {
@@ -156,6 +158,9 @@ export default function App() {
             <button className="btn primary ai" onClick={() => setImageGenOpen(true)} disabled={!text.trim()}>
               Generate Image
             </button>
+            <button className="btn primary ai meme-btn" onClick={() => setMemeOpen(true)} disabled={!text.trim()}>
+              Meme Mode 🔥
+            </button>
           </div>
         </section>
 
@@ -261,6 +266,13 @@ export default function App() {
         open={commentCrafterOpen}
         profile={profile}
         onClose={() => setCommentCrafterOpen(false)}
+      />
+
+      <MemeMode
+        open={memeOpen}
+        text={text}
+        onClose={() => setMemeOpen(false)}
+        onUse={(result) => setText(result)}
       />
     </div>
   );
